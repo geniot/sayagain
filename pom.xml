@@ -157,7 +157,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/recipes-api-specification.yml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/static/recipes-api-specification.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <modelNameSuffix>Dto</modelNameSuffix>
