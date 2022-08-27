@@ -1,0 +1,23 @@
+openapi: 3.0.0
+info:
+  title: Recipes API
+  description: Application which allows users to manage their favourite recipes.
+  version: 0.0.1
+servers:
+  - url: https://sayagain.app/api
+    description: Main (production) server
+paths:
+  /recipes:
+    get:
+      summary: Returns a list of recipes.
+      operationId: getRecipes
+      description:
+      responses:
+        '200':    # status code
+          description: A JSON array of recipes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
