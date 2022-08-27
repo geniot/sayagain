@@ -6,18 +6,33 @@ info:
 servers:
   - url: https://sayagain.app/api
     description: Main (production) server
+  - url: http://localhost:8002/sayagain/api
+    description: Localhost (dev) server
 paths:
   /recipes:
     get:
-      summary: Returns a list of recipes.
+      summary: Get recipes
       operationId: getRecipes
-      description:
       responses:
-        '200':    # status code
-          description: A JSON array of recipes
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: string
+                $ref: '#components/schemas/Recipe'
+components:
+  schemas:
+    Recipe:
+      title: Recipe
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        servings:
+          type: integer
+        vegetarian:
+          type: boolean
