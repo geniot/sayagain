@@ -1,15 +1,18 @@
+**Demo**
+https://sayagain.app/swagger-ui/index.html
+
+**Installation**
+
 You only need MySQL with database 'sayagain', user 'sayagain' and password 'sayagain'.
 
 *SayAgain.app is a domain I acquired for another project (hobby). I use it for this assessment because I have an
 existing CI/CD pipeline that deploys to this domain.
 
-**Installation**
-
 1. Create a jar package with 'mvn clean package'.
 2. Run it with 'java -jar sayagain.jar' (port 8002 should be free)
 3. Open http://localhost:8002/sayagain/swagger-ui/index.html in your browser
 
-You can also use https://sayagain.app/swagger-ui/index.html
+
 
 **Architectural Choices**
 
