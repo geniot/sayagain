@@ -72,6 +72,9 @@ public class RecipeService {
         if (vegetarian != null) {
             predicates.add(criteriaBuilder.equal(root.get("vegetarian"), vegetarian));
         }
+        if (servings != null) {
+            predicates.add(criteriaBuilder.equal(root.get("servings"), servings));
+        }
         criteriaQuery.select(root).where(predicates.toArray(new Predicate[0]));
         TypedQuery<Recipe> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
