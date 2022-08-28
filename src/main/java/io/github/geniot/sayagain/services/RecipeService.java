@@ -90,6 +90,9 @@ public class RecipeService {
             subQuery.select(subQueryRoot.get("id")).where(excludePredicates.toArray(new Predicate[0]));
             predicates.add(criteriaBuilder.notEqual(root.get("id"), subQuery));
         }
+        if (fullTextQuery != null) {
+            predicates.add(criteriaBuilder.like(root.get("description"), "%" + fullTextQuery + "%"));
+        }
         criteriaQuery.select(root).where(predicates.toArray(new Predicate[0]));
         TypedQuery<Recipe> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
