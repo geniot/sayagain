@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,9 @@ public class IngredientController {
     Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
     @Autowired
+    Environment env;
+
+    @Autowired
     IngredientService ingredientService;
 
     @Autowired
@@ -26,6 +30,9 @@ public class IngredientController {
 
     @DeleteMapping
     public void deleteRecipes() {
+//        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+//            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+//        }
         ingredientService.deleteAll();
     }
 

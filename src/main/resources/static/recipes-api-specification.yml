@@ -11,7 +11,7 @@ servers:
 paths:
   /recipes:
     get:
-      summary: Get recipes
+      summary: Get all recipes
       operationId: getRecipes
       responses:
         '200':
@@ -20,10 +20,40 @@ paths:
             application/json:
               schema:
                 $ref: '#components/schemas/Recipe'
+    post:
+      summary: Add a new recipe
+      operationId: postRecipe
+      requestBody:
+        description: Recipe
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Recipe'
+    put:
+      summary: Update an existing recipe
+      operationId: putRecipe
+      requestBody:
+        description: Successful operation
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '200':
+          description: OK
   /recipes/search:
     post:
-      summary: Get filtered recipes
-      operationId: getFilteredRecipes
+      summary: Find by search criteria
+      operationId: findRecipes
       requestBody:
         description: Search criteria
         required: true

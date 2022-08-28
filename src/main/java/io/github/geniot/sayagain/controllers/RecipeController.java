@@ -62,9 +62,9 @@ public class RecipeController {
         return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
     }
 
-    @PatchMapping
+    @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public RecipeDto patchRecipe(@RequestBody RecipeDto recipeDto) {
+    public RecipeDto putRecipe(@RequestBody RecipeDto recipeDto) {
         if (recipeDto.getId() == null) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
         }

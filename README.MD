@@ -1,32 +1,31 @@
-Objective
+You only need MySQL with database 'sayagain', user 'sayagain' and password 'sayagain'.
 
-Create a standalone java application which allows users to manage their favourite recipes. It should
-allow adding, updating, removing and fetching recipes. Additionally, users should be able to filter
-available recipes based on one or more of the following criteria:
+*SayAgain.app is a domain I acquired for another project (hobby). I use it for this assessment because I have an
+existing CI/CD pipeline that deploys to this domain.
 
-1. Whether or not the dish is vegetarian
-2. The number of servings
-3. Specific ingredients (either include or exclude)
-4. Text search within the instructions.
-   For example, the API should be able to handle the following search requests:
-   
-• All vegetarian recipes 
+**Installation**
 
-• Recipes that can serve 4 persons and have “potatoes” as an ingredient
+1. Create a jar package with 'mvn clean package'.
+2. Run it with 'java -jar sayagain.jar' (port 8002 should be free)
+3. Open http://localhost:8002/sayagain/swagger-ui/index.html in your browser
 
-• Recipes without “salmon” as an ingredient that has “oven” in the instructions.
+You can also use https://sayagain.app/swagger-ui/index.html
 
-   Requirements
+**Architectural Choices**
 
-   Please ensure that we have some documentation about the architectural choices and also how to
-   run the application. The project is expected to be delivered as a GitHub (or any other public git
-   hosting) repository URL.
+1. OAS3 yaml file is loaded by Swagger. I chose not to use annotations scanning.
+2. It's a three-tier architecture https://en.wikipedia.org/wiki/Multitier_architecture
+3. There is no user management, authentication, validation is rudimentary (I'm out of time)
+4. RecipeService has EntityManager and search implementation. Ideally this functionality should be part of the data
+   tier.
+5. DTOs are generated from the specification using Maven plugin.
+6. Specification is synced manually in this project and https://github.com/geniot/sayagain-api-regression-test
+7. There are no JUnit tests for several reasons:
 
-   All these requirements needs to be satisfied:
+- there is not much business logic,
+- regression tests cover all use cases,
+- I have already exceeded the time limit of 8 hours.
 
-6. It must be a REST application implemented using Java (use a framework of your choice)
-7. Your code should be production-ready.
-8. REST API must be documented
-9. Data must be persisted in a database
-10. Unit tests must be present
-11. Integration tests must be present
+8. Exclusive search can probably be improved. Please let me know how do it, I'm always interested in learning new
+   things.
+9. Search criteria use AND to concatenate predicates.
