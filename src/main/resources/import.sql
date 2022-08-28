@@ -1,10 +1,9 @@
-insert into ingredient (id, ingredient_name) values (1, 'potatoes');
-insert into recipe (id, title,  description, servings, vegetarian) values (1, 'Potato Pancakes','Finely grate potatoes and onion into a large bowl. Drain off any excess liquid.',6,true);
-insert into xref_recipe_ingredient (recipe_id, ingredient_id) values (1,1);
-
-insert into ingredient (ingredient_name) values ('salt');
-insert into ingredient (ingredient_name) values ('pepper');
-insert into ingredient (ingredient_name) values ('oil');
+-- insert into ingredient (id, ingredient_name) values (1, 'potatoes');
+-- insert into recipe (id, title,  description, servings, vegetarian) values (1, 'Potato Pancakes','Finely grate potatoes and onion into a large bowl. Drain off any excess liquid.',6,true);
+-- insert into xref_recipe_ingredient (recipe_id, ingredient_id) values (1,1);
+-- insert into ingredient (ingredient_name) values ('salt');
+-- insert into ingredient (ingredient_name) values ('pepper');
+-- insert into ingredient (ingredient_name) values ('oil');
 -- insert into ingredient (ingredient_name) values ('flour');
 -- insert into ingredient (ingredient_name) values ('garlic');
 -- insert into ingredient (ingredient_name) values ('sugar');

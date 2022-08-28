@@ -7,9 +7,8 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,19 +25,29 @@ public class RecipeController {
     ModelMapper modelMapper;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<RecipeDto> getRecipes() {
         return recipeService.getRecipes().stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public RecipeDto postRecipe(@RequestBody RecipeDto recipeDto) {
+        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
+    }
+
+    @DeleteMapping
+    public void deleteRecipes() {
+        recipeService.deleteAll();
+    }
+
     private RecipeDto convertToDto(Recipe recipe) {
-        RecipeDto postDto = modelMapper.map(recipe, RecipeDto.class);
-        postDto.setId(recipe.getId());
-        postDto.setTitle(recipe.getTitle());
-        postDto.setDescription(recipe.getDescription());
-        postDto.setServings(recipe.getServings());
-        postDto.setVegetarian(recipe.getVegetarian());
-        return postDto;
+        return modelMapper.map(recipe, RecipeDto.class);
+    }
+
+    private Recipe convertToRecipe(RecipeDto recipeDto) {
+        return modelMapper.map(recipeDto, Recipe.class);
     }
 }

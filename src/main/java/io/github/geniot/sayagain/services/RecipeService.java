@@ -14,7 +14,15 @@ public class RecipeService {
     @Autowired
     RecipeRepository recipeRepository;
 
-    public List<Recipe> getRecipes(){
+    public List<Recipe> getRecipes() {
         return recipeRepository.findAll();
+    }
+
+    public Recipe createRecipe(Recipe recipe) {
+        return recipeRepository.save(recipe);
+    }
+
+    public void deleteAll() {
+        recipeRepository.deleteAll();
     }
 }
