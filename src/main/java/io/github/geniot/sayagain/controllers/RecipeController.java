@@ -43,6 +43,11 @@ public class RecipeController {
         recipeService.deleteAll();
     }
 
+    @DeleteMapping("/{recipeId}")
+    public void deleteRecipe(@PathVariable Integer recipeId) {
+        recipeService.deleteRecipe(recipeId);
+    }
+
     private RecipeDto convertToDto(Recipe recipe) {
         return modelMapper.map(recipe, RecipeDto.class);
     }
