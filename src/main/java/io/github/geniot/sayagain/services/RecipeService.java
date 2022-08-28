@@ -1,5 +1,6 @@
 package io.github.geniot.sayagain.services;
 
+import io.github.geniot.sayagain.entities.Ingredient;
 import io.github.geniot.sayagain.entities.Recipe;
 import io.github.geniot.sayagain.gen.model.IngredientDto;
 import io.github.geniot.sayagain.repositories.RecipeRepository;
@@ -11,10 +12,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +72,23 @@ public class RecipeService {
         }
         if (servings != null) {
             predicates.add(criteriaBuilder.equal(root.get("servings"), servings));
+        }
+        if (includeIngredients != null) {
+            Join<Recipe, Ingredient> join = root.join("ingredients", JoinType.INNER);
+            for (IngredientDto ingredientDto : includeIngredients) {
+                predicates.add(criteriaBuilder.like(join.get("name").as(String.class), ingredientDto.getName()));
+            }
+        }
+        if (excludeIngredients != null) {
+            Subquery<Recipe> subQuery = criteriaQuery.subquery(Recipe.class);
+            Root<Recipe> subQueryRoot = subQuery.from(Recipe.class);
+            List<Predicate> excludePredicates = new ArrayList<>();
+            Join<Recipe, Ingredient> join = subQueryRoot.join("ingredients", JoinType.INNER);
+            for (IngredientDto ingredientDto : excludeIngredients) {
+                excludePredicates.add(criteriaBuilder.like(join.get("name").as(String.class), ingredientDto.getName()));
+            }
+            subQuery.select(subQueryRoot.get("id")).where(excludePredicates.toArray(new Predicate[0]));
+            predicates.add(criteriaBuilder.notEqual(root.get("id"), subQuery));
         }
         criteriaQuery.select(root).where(predicates.toArray(new Predicate[0]));
         TypedQuery<Recipe> query = entityManager.createQuery(criteriaQuery);
