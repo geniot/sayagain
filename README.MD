@@ -19,17 +19,16 @@ existing CI/CD pipeline that deploys to this domain.
 
 1. OAS3 yaml file is loaded by Swagger. I chose not to use annotations scanning.
 2. It's a three-tier architecture https://en.wikipedia.org/wiki/Multitier_architecture
-3. There is no user management, authentication, validation is rudimentary (I'm out of time)
+3. There is no user management, authentication, validation is rudimentary (I've used the time limit)
 4. RecipeService has EntityManager and search implementation. Ideally this functionality should be part of the data
    tier.
 5. DTOs are generated from the specification using Maven plugin.
-6. Specification is synced manually in this project and https://github.com/geniot/sayagain-api-regression-test
+6. Specification is synced manually across this project and https://github.com/geniot/sayagain-api-regression-test
 7. There are no JUnit tests for several reasons:
 
 - there is not much business logic,
 - regression tests cover all use cases,
-- I have already exceeded the time limit of 8 hours.
+- I've used the time limit of 8 hours.
 
-8. Exclusive search can probably be improved. Please let me know how do it, I'm always interested in learning new
-   things.
+8. The query for exclusive search can probably be improved.
 9. Search criteria use AND to concatenate predicates.
