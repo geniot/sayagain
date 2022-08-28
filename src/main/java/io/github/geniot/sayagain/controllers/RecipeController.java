@@ -2,6 +2,7 @@ package io.github.geniot.sayagain.controllers;
 
 import io.github.geniot.sayagain.entities.Recipe;
 import io.github.geniot.sayagain.gen.model.RecipeDto;
+import io.github.geniot.sayagain.gen.model.SearchCriteriaDto;
 import io.github.geniot.sayagain.services.RecipeService;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,9 +34,40 @@ public class RecipeController {
                 .collect(Collectors.toList());
     }
 
+    @PostMapping("/search")
+    @ResponseStatus(HttpStatus.OK)
+    public List<RecipeDto> getRecipes(@RequestBody SearchCriteriaDto searchCriteriaDto) {
+        return recipeService.getRecipes(searchCriteriaDto.getVegetarian(),
+                        searchCriteriaDto.getServings(),
+                        searchCriteriaDto.getIncludeIngredients(),
+                        searchCriteriaDto.getExcludeIngredients(),
+                        searchCriteriaDto.getFullTextQuery())
+                .stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{recipeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeDto getRecipe(@PathVariable Integer recipeId) {
+        return convertToDto(recipeService.getRecipe(recipeId));
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RecipeDto postRecipe(@RequestBody RecipeDto recipeDto) {
+        if (recipeDto.getId() != null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
+    }
+
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeDto patchRecipe(@RequestBody RecipeDto recipeDto) {
+        if (recipeDto.getId() == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
         return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
     }
 
