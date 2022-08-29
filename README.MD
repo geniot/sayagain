@@ -23,4 +23,4 @@ existing CI/CD pipeline that deploys to this domain.
    tier.
 4. DTOs are generated from the specification using Maven plugin.
 5. Specification is synced manually across this project and https://github.com/geniot/sayagain-api-regression-test
-6. Search criteria use AND to concatenate predicates.
+6. Search uses AND to concatenate search criteria.
