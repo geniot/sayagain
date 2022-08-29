@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,14 +30,6 @@ public class IngredientController {
     @Autowired
     ModelMapper modelMapper;
 
-    @DeleteMapping
-    public void deleteRecipes() {
-//        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
-//            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-//        }
-        ingredientService.deleteAll();
-    }
-
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<IngredientDto> getIngredients() {
@@ -46,5 +40,16 @@ public class IngredientController {
 
     private IngredientDto convertToDto(Ingredient recipe) {
         return modelMapper.map(recipe, IngredientDto.class);
+    }
+
+    /**
+     * Used in testing only.
+     */
+    @DeleteMapping
+    public void deleteRecipes() {
+        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+        }
+        ingredientService.deleteAll();
     }
 }

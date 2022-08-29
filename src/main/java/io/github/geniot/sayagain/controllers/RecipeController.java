@@ -8,10 +8,12 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,8 @@ public class RecipeController {
     RecipeService recipeService;
     @Autowired
     ModelMapper modelMapper;
+    @Autowired
+    Environment env;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -41,7 +45,7 @@ public class RecipeController {
                         searchCriteriaDto.getServings(),
                         searchCriteriaDto.getIncludeIngredients(),
                         searchCriteriaDto.getExcludeIngredients(),
-                        searchCriteriaDto.getFullTextQuery())
+                        searchCriteriaDto.getKeyword())
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -71,11 +75,6 @@ public class RecipeController {
         return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
     }
 
-    @DeleteMapping
-    public void deleteRecipes() {
-        recipeService.deleteAll();
-    }
-
     @DeleteMapping("/{recipeId}")
     public void deleteRecipe(@PathVariable Integer recipeId) {
         recipeService.deleteRecipe(recipeId);
@@ -87,5 +86,16 @@ public class RecipeController {
 
     private Recipe convertToRecipe(RecipeDto recipeDto) {
         return modelMapper.map(recipeDto, Recipe.class);
+    }
+
+    /**
+     * Used in testing only.
+     */
+    @DeleteMapping
+    public void deleteRecipes() {
+        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+        }
+        recipeService.deleteAll();
     }
 }
