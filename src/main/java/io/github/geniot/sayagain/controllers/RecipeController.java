@@ -1,6 +1,7 @@
 package io.github.geniot.sayagain.controllers;
 
 import io.github.geniot.sayagain.entities.Recipe;
+import io.github.geniot.sayagain.gen.model.IngredientDto;
 import io.github.geniot.sayagain.gen.model.RecipeDto;
 import io.github.geniot.sayagain.gen.model.SearchCriteriaDto;
 import io.github.geniot.sayagain.services.RecipeService;
@@ -30,14 +31,71 @@ public class RecipeController {
     @Autowired
     Environment env;
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<RecipeDto> getRecipes() {
-        return recipeService.getRecipes().stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
+    /**
+     * CREATE
+     *
+     * @param recipeDto
+     * @return
+     */
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public RecipeDto postRecipe(@RequestBody RecipeDto recipeDto) {
+        if (recipeDto.getId() != null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+        if (recipeDto.getIngredients() != null) {
+            for (IngredientDto ingredientDto : recipeDto.getIngredients()) {
+                if (ingredientDto.getId() != null) {
+                    throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+                }
+            }
+        }
+        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
     }
 
+    /**
+     * READ
+     *
+     * @param recipeId
+     * @return
+     */
+    @GetMapping("/{recipeId}")
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeDto getRecipe(@PathVariable Integer recipeId) {
+        return convertToDto(recipeService.getRecipe(recipeId));
+    }
+
+    /**
+     * UPDATE
+     *
+     * @param recipeDto
+     * @return
+     */
+    @PutMapping
+    @ResponseStatus(HttpStatus.OK)
+    public RecipeDto putRecipe(@RequestBody RecipeDto recipeDto) {
+        if (recipeDto.getId() == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+        }
+        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
+    }
+
+    /**
+     * DELETE
+     *
+     * @param recipeId
+     */
+    @DeleteMapping("/{recipeId}")
+    public void deleteRecipe(@PathVariable Integer recipeId) {
+        recipeService.deleteRecipe(recipeId);
+    }
+
+    /**
+     * FIND
+     *
+     * @param searchCriteriaDto
+     * @return
+     */
     @PostMapping("/search")
     @ResponseStatus(HttpStatus.OK)
     public List<RecipeDto> getRecipes(@RequestBody SearchCriteriaDto searchCriteriaDto) {
@@ -51,35 +109,6 @@ public class RecipeController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/{recipeId}")
-    @ResponseStatus(HttpStatus.OK)
-    public RecipeDto getRecipe(@PathVariable Integer recipeId) {
-        return convertToDto(recipeService.getRecipe(recipeId));
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public RecipeDto postRecipe(@RequestBody RecipeDto recipeDto) {
-        if (recipeDto.getId() != null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
-        }
-        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
-    }
-
-    @PutMapping
-    @ResponseStatus(HttpStatus.OK)
-    public RecipeDto putRecipe(@RequestBody RecipeDto recipeDto) {
-        if (recipeDto.getId() == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
-        }
-        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
-    }
-
-    @DeleteMapping("/{recipeId}")
-    public void deleteRecipe(@PathVariable Integer recipeId) {
-        recipeService.deleteRecipe(recipeId);
-    }
-
     private RecipeDto convertToDto(Recipe recipe) {
         return modelMapper.map(recipe, RecipeDto.class);
     }
@@ -89,7 +118,7 @@ public class RecipeController {
     }
 
     /**
-     * Used in testing only.
+     * Used only in testing.
      */
     @DeleteMapping
     public void deleteRecipes() {
@@ -97,5 +126,16 @@ public class RecipeController {
             throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
         }
         recipeService.deleteAll();
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<RecipeDto> getRecipes() {
+        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
+        }
+        return recipeService.getRecipes().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 }

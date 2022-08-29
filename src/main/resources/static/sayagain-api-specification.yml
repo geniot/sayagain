@@ -14,13 +14,15 @@ tags:
 security:
   - basicAuth: []
 paths:
+
   /recipes:
     post:
       security:
         - basicAuth: []
       tags:
         - recipe
-      summary: Add a new recipe
+      summary: CREATE - Add a new recipe
+      description: Do not use ids for new items.
       operationId: postRecipe
       requestBody:
         description: Recipe
@@ -38,42 +40,14 @@ paths:
                 $ref: '#/components/schemas/Recipe'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-  /recipes/{recipeId}:
-    get:
-      security:
-        - basicAuth: []
-      tags:
-        - recipe
-      summary: Find recipe by id
-      operationId: getRecipe
-      parameters:
-        - name: recipeId
-          in: path
-          description: Recipe Id
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+
     put:
       security:
         - basicAuth: []
       tags:
         - recipe
-      summary: Update an existing recipe
+      summary: UPDATE - Update an existing recipe
       operationId: putRecipe
-      parameters:
-        - name: recipeId
-          in: path
-          description: Recipe Id
-          required: true
-          schema:
-            type: integer
-            format: int64
       requestBody:
         description: Successful operation
         required: true
@@ -86,12 +60,39 @@ paths:
           description: OK
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+
+  /recipes/{recipeId}:
+    get:
+      security:
+        - basicAuth: []
+      tags:
+        - recipe
+      summary: READ - Find recipe by id
+      operationId: getRecipe
+      parameters:
+        - name: recipeId
+          in: path
+          description: Recipe Id
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Recipe'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
     delete:
       security:
         - basicAuth: []
       tags:
         - recipe
-      summary: Delete an existing recipe
+      summary: DELETE - Delete an existing recipe
       operationId: deleteRecipe
       parameters:
         - name: recipeId
@@ -106,13 +107,14 @@ paths:
           description: OK
         '401':
           $ref: '#/components/responses/UnauthorizedError'
+
   /recipes/search:
     post:
       security:
         - basicAuth: []
       tags:
         - recipe
-      summary: Find recipes by search criteria
+      summary: FIND - Find recipes by search criteria
       operationId: findRecipes
       requestBody:
         description: Search criteria

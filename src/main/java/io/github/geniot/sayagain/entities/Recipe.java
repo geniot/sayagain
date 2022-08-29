@@ -16,7 +16,7 @@ public class Recipe {
     @Column(name = "id")
     Integer id;
 
-    @Column(name = "title", unique = true)
+    @Column(name = "title")
     String title;
 
     @Column
