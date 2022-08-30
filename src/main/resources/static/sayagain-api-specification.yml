@@ -4,21 +4,52 @@ info:
   description: Application which allows users to manage their favourite recipes.
   version: 0.0.1
 servers:
+  - url: https://localhost/api
+    description: Localhost (dev) server
   - url: https://sayagain.app/api
     description: Main (production) server
-  - url: http://localhost:8002/api
-    description: Localhost (dev) server
 tags:
   - name: recipe
     description: Everything about your Recipes
+  - name: user
+    description: Everything about Users
 security:
-  - basicAuth: []
+  - bearerAuth: []
 paths:
+
+  /users/signin:
+    get:
+      tags:
+        - user
+      summary: Sign in with email address and password
+      operationId: signin
+      parameters:
+        - in: header
+          name: X-email
+          description: Email address
+          example: test@test.com
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-password
+          description: Password
+          example: Somepass-2
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
 
   /recipes:
     post:
       security:
-        - basicAuth: []
+        - bearerAuth: []
       tags:
         - recipe
       summary: CREATE - Add a new recipe
@@ -43,7 +74,7 @@ paths:
 
     put:
       security:
-        - basicAuth: []
+        - bearerAuth: []
       tags:
         - recipe
       summary: UPDATE - Update an existing recipe
@@ -64,7 +95,7 @@ paths:
   /recipes/{recipeId}:
     get:
       security:
-        - basicAuth: []
+        - bearerAuth: []
       tags:
         - recipe
       summary: READ - Find recipe by id
@@ -89,7 +120,7 @@ paths:
 
     delete:
       security:
-        - basicAuth: []
+        - bearerAuth: []
       tags:
         - recipe
       summary: DELETE - Delete an existing recipe
@@ -111,7 +142,7 @@ paths:
   /recipes/search:
     post:
       security:
-        - basicAuth: []
+        - bearerAuth: []
       tags:
         - recipe
       summary: FIND - Find recipes by search criteria
@@ -134,9 +165,10 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
 components:
   securitySchemes:
-    basicAuth:
+    bearerAuth:
       type: http
-      scheme: basic
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     Ingredient:
       title: Ingredient
