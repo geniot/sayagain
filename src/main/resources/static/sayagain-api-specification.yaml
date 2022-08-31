@@ -14,30 +14,22 @@ tags:
   - name: user
     description: Everything about Users
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 paths:
 
   /users/signin:
-    get:
+    post:
       tags:
         - user
       summary: Sign in with email address and password
       operationId: signin
-      parameters:
-        - in: header
-          name: X-email
-          description: Email address
-          example: test@test.com
-          required: true
-          schema:
-            type: string
-        - in: header
-          name: X-password
-          description: Password
-          example: Somepass-2
-          required: true
-          schema:
-            type: string
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: OK
@@ -47,26 +39,18 @@ paths:
                 type: string
 
   /users/signup:
-    get:
+    post:
       tags:
         - user
       summary: Sign up with email address and password
       operationId: signup
-      parameters:
-        - in: header
-          name: X-email
-          description: Email address
-          example: test@test.com
-          required: true
-          schema:
-            type: string
-        - in: header
-          name: X-password
-          description: Password
-          example: Somepass-2
-          required: true
-          schema:
-            type: string
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
       responses:
         '200':
           description: OK
@@ -78,7 +62,7 @@ paths:
   /recipes:
     post:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - recipe
       summary: CREATE - Add a new recipe
@@ -103,7 +87,7 @@ paths:
 
     put:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - recipe
       summary: UPDATE - Update an existing recipe
@@ -124,7 +108,7 @@ paths:
   /recipes/{recipeId}:
     get:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - recipe
       summary: READ - Find recipe by id
@@ -149,7 +133,7 @@ paths:
 
     delete:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - recipe
       summary: DELETE - Delete an existing recipe
@@ -171,7 +155,7 @@ paths:
   /recipes/search:
     post:
       security:
-        - bearerAuth: []
+        - bearerAuth: [ ]
       tags:
         - recipe
       summary: FIND - Find recipes by search criteria
@@ -199,6 +183,18 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    User:
+      title: User
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+          example: test@test.com
+        password:
+          type: string
+          example: Somepass-2
     Ingredient:
       title: Ingredient
       type: object

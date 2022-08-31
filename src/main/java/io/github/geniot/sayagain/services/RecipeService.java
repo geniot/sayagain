@@ -37,7 +37,7 @@ public class RecipeService {
     }
 
     public void deleteRecipe(Integer recipeId) {
-        Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeId);
+        Optional<Recipe> optionalRecipe = recipeRepository.findByUserAndId(userService.getCurrentUser(), recipeId);
         if (optionalRecipe.isPresent()) {
             recipeRepository.delete(optionalRecipe.get());
         } else {
@@ -46,7 +46,7 @@ public class RecipeService {
     }
 
     public Recipe getRecipe(Integer recipeId) {
-        Optional<Recipe> optionalRecipe = recipeRepository.findById(recipeId);
+        Optional<Recipe> optionalRecipe = recipeRepository.findByUserAndId(userService.getCurrentUser(), recipeId);
         if (optionalRecipe.isPresent()) {
             return optionalRecipe.get();
         } else {
@@ -90,6 +90,9 @@ public class RecipeService {
         if (fullTextQuery != null) {
             predicates.add(criteriaBuilder.like(root.get("description"), "%" + fullTextQuery + "%"));
         }
+
+        predicates.add(criteriaBuilder.equal(root.get("user"), userService.getCurrentUser()));
+
         criteriaQuery.select(root).where(predicates.toArray(new Predicate[0]));
         TypedQuery<Recipe> query = entityManager.createQuery(criteriaQuery);
         return query.getResultList();
