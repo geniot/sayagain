@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -27,18 +28,18 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    /**
-     * THIS IS NOT A SECURE PRACTICE! For simplicity, we are storing a static key here. Ideally, in a
-     * microservices environment, this key would be kept on a config-server.
-     */
-    @Value("${security.jwt.token.secret-key:secret-key}")
     private String secretKey;
 
     @Value("${security.jwt.token.expire-length:3600000}")
     private long validityInMilliseconds = 3600000; // 1h
 
     @Autowired
-    private MyUserDetails myUserDetails;
+    private UserService userService;
+
+    public JwtTokenProvider() {
+        this.secretKey = Base64.getEncoder().encodeToString(RandomStringUtils.random(128).getBytes());
+    }
+
 
     @PostConstruct
     protected void init() {
@@ -62,7 +63,7 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = myUserDetails.loadUserByUsername(getUsername(token));
+        UserDetails userDetails = userService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
