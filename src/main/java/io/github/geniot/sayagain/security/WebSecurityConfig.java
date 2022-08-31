@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +29,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${apiPrefix}")
     String apiPrefix;
 
+    @Autowired
+    Environment env;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
@@ -36,14 +42,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // Entry points
-        http.authorizeRequests()//
-                .antMatchers(apiPrefix + "/users/signin").permitAll()//
-                .antMatchers(apiPrefix + "/users/signup").permitAll()//
-                // Disallow everything else..
-                .anyRequest().authenticated();
+        http.authorizeRequests()
+                .antMatchers(apiPrefix + "/users/signin").permitAll()
+                .antMatchers(apiPrefix + "/users/signup").permitAll();
 
-        // If a user try to access a resource without having enough permissions
-        http.exceptionHandling().accessDeniedPage("/login");
+        if (!Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+            http.authorizeRequests().antMatchers(apiPrefix + "/testing/**").permitAll();
+        }
+
+        // Disallow everything else..
+        http.authorizeRequests().anyRequest().authenticated();
 
         // Apply JWT
         http.apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
@@ -61,6 +69,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui/**")
                 .antMatchers("/configuration/**")
                 .antMatchers("/webjars/**")
+                .antMatchers("/*.yaml")
                 .antMatchers("/*.yml")
                 .antMatchers("/public");
     }

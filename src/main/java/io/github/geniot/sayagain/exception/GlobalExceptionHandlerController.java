@@ -1,5 +1,7 @@
 package io.github.geniot.sayagain.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -16,6 +18,8 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandlerController {
+
+    Logger logger = LoggerFactory.getLogger(GlobalExceptionHandlerController.class);
 
     @Bean
     public ErrorAttributes errorAttributes() {
@@ -41,7 +45,8 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(Exception.class)
-    public void handleException(HttpServletResponse res) throws IOException {
+    public void handleException(Exception ex, HttpServletResponse res) throws IOException {
+        logger.error(ex.getMessage(), ex);
         res.sendError(HttpStatus.BAD_REQUEST.value(), "Something went wrong");
     }
 

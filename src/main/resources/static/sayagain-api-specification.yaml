@@ -46,6 +46,35 @@ paths:
               schema:
                 type: string
 
+  /users/signup:
+    get:
+      tags:
+        - user
+      summary: Sign up with email address and password
+      operationId: signup
+      parameters:
+        - in: header
+          name: X-email
+          description: Email address
+          example: test@test.com
+          required: true
+          schema:
+            type: string
+        - in: header
+          name: X-password
+          description: Password
+          example: Somepass-2
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+
   /recipes:
     post:
       security:

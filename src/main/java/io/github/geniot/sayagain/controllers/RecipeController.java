@@ -1,35 +1,22 @@
 package io.github.geniot.sayagain.controllers;
 
-import io.github.geniot.sayagain.entities.Recipe;
 import io.github.geniot.sayagain.gen.model.IngredientDto;
 import io.github.geniot.sayagain.gen.model.RecipeDto;
 import io.github.geniot.sayagain.gen.model.SearchCriteriaDto;
-import io.github.geniot.sayagain.services.RecipeService;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 @RestController
 @RequestMapping("${apiPrefix}/recipes")
-public class RecipeController {
+public class RecipeController extends BaseController{
     Logger logger = LoggerFactory.getLogger(RecipeController.class);
-
-    @Autowired
-    RecipeService recipeService;
-    @Autowired
-    ModelMapper modelMapper;
-    @Autowired
-    Environment env;
 
     /**
      * CREATE
@@ -50,7 +37,7 @@ public class RecipeController {
                 }
             }
         }
-        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
+        return convertRecipeToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
     }
 
     /**
@@ -62,7 +49,7 @@ public class RecipeController {
     @GetMapping("/{recipeId}")
     @ResponseStatus(HttpStatus.OK)
     public RecipeDto getRecipe(@PathVariable Integer recipeId) {
-        return convertToDto(recipeService.getRecipe(recipeId));
+        return convertRecipeToDto(recipeService.getRecipe(recipeId));
     }
 
     /**
@@ -77,7 +64,7 @@ public class RecipeController {
         if (recipeDto.getId() == null) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
         }
-        return convertToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
+        return convertRecipeToDto(recipeService.createRecipe(convertToRecipe(recipeDto)));
     }
 
     /**
@@ -105,37 +92,7 @@ public class RecipeController {
                         searchCriteriaDto.getExcludeIngredients(),
                         searchCriteriaDto.getKeyword())
                 .stream()
-                .map(this::convertToDto)
-                .collect(Collectors.toList());
-    }
-
-    private RecipeDto convertToDto(Recipe recipe) {
-        return modelMapper.map(recipe, RecipeDto.class);
-    }
-
-    private Recipe convertToRecipe(RecipeDto recipeDto) {
-        return modelMapper.map(recipeDto, Recipe.class);
-    }
-
-    /**
-     * Used only in testing.
-     */
-    @DeleteMapping
-    public void deleteRecipes() {
-        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
-            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-        }
-        recipeService.deleteAll();
-    }
-
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<RecipeDto> getRecipes() {
-        if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
-            throw new HttpClientErrorException(HttpStatus.FORBIDDEN);
-        }
-        return recipeService.getRecipes().stream()
-                .map(this::convertToDto)
+                .map(this::convertRecipeToDto)
                 .collect(Collectors.toList());
     }
 }

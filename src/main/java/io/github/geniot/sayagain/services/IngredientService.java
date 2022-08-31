@@ -14,10 +14,6 @@ public class IngredientService {
     @Autowired
     private IngredientRepository ingredientRepository;
 
-    public void deleteAll() {
-        ingredientRepository.deleteAll();
-    }
-
     public List<Ingredient> getIngredients() {
         return ingredientRepository.findAll();
     }
