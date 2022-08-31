@@ -4,10 +4,10 @@ info:
   description: Application which allows users to manage their favourite recipes.
   version: 0.0.1
 servers:
-  - url: https://localhost/api
-    description: Localhost (dev) server
   - url: https://sayagain.app/api
     description: Main (production) server
+  - url: https://localhost/api
+    description: Localhost (dev) server
 tags:
   - name: recipe
     description: Everything about your Recipes
