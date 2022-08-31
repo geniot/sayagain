@@ -36,9 +36,9 @@ public class UserService implements UserDetailsService {
     private PasswordEncoder passwordEncoder;
 
 
-    public String signin(String username, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        return jwtTokenProvider.createToken(username, userRepository.findUserByEmail(username).getRoles());
+    public String signin(String email, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        return jwtTokenProvider.createToken(email, userRepository.findUserByEmail(email).getRoles());
     }
 
     public String signup(String email, String password) {
