@@ -1,5 +1,6 @@
 package io.github.geniot.sayagain.controllers;
 
+import io.github.geniot.sayagain.gen.model.IngredientDto;
 import io.github.geniot.sayagain.gen.model.RecipeDto;
 import io.github.geniot.sayagain.repositories.IngredientRepository;
 import io.github.geniot.sayagain.repositories.RecipeRepository;
@@ -58,11 +59,19 @@ public class TestingController extends BaseController {
         userRepository.deleteAll();
     }
 
-    @GetMapping
+    @GetMapping("/recipes")
     @ResponseStatus(HttpStatus.OK)
     public List<RecipeDto> getRecipes() {
         return recipeRepository.findAll().stream()
                 .map(this::convertRecipeToDto)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/ingredients")
+    @ResponseStatus(HttpStatus.OK)
+    public List<IngredientDto> getIngredients() {
+        return ingredientRepository.findAll().stream()
+                .map(this::convertIngredientToDto)
                 .collect(Collectors.toList());
     }
 }

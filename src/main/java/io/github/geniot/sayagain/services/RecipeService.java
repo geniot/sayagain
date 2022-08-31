@@ -2,12 +2,10 @@ package io.github.geniot.sayagain.services;
 
 import io.github.geniot.sayagain.entities.Ingredient;
 import io.github.geniot.sayagain.entities.Recipe;
-import io.github.geniot.sayagain.entities.User;
 import io.github.geniot.sayagain.gen.model.IngredientDto;
 import io.github.geniot.sayagain.repositories.RecipeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -23,6 +21,10 @@ import java.util.Optional;
 @Component
 @Transactional
 public class RecipeService {
+
+    @Autowired
+    UserService userService;
+
     @Autowired
     private RecipeRepository recipeRepository;
 
@@ -30,7 +32,7 @@ public class RecipeService {
     private EntityManager entityManager;
 
     public Recipe createRecipe(Recipe recipe) {
-        recipe.setUser((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        recipe.setUser(userService.getCurrentUser());
         return recipeRepository.save(recipe);
     }
 
