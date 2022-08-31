@@ -11,6 +11,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,6 +31,7 @@ public class GlobalExceptionHandlerController {
             public Map<String, Object> getErrorAttributes(WebRequest webRequest, ErrorAttributeOptions options) {
                 Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, options);
                 errorAttributes.remove("exception");
+                errorAttributes.remove("trace");
                 return errorAttributes;
             }
         };
@@ -48,6 +50,11 @@ public class GlobalExceptionHandlerController {
     @ExceptionHandler(BadCredentialsException.class)
     public void handleBadCredentialsExceptionException(HttpServletResponse res) throws IOException {
         res.sendError(HttpStatus.UNAUTHORIZED.value(), "Bad credentials");
+    }
+
+    @ExceptionHandler(HttpClientErrorException.class)
+    public void handleHttpClientErrorException(HttpServletResponse res) throws IOException {
+        res.sendError(HttpStatus.BAD_REQUEST.value(), "Something went wrong");
     }
 
     @ExceptionHandler(Exception.class)
