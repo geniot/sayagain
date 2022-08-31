@@ -1,0 +1,33 @@
+spring:
+  web:
+    resources:
+      static-locations: classpath:/static-files
+      cache:
+        cachecontrol:
+          no-cache: 'true'
+      chain:
+        cache: 'false'
+  mvc:
+    static-path-pattern: /**
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: 'true'
+    properties:
+      hibernate:
+        format_sql: 'false'
+  datasource:
+    password: sayagain
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: sayagain
+    url: jdbc:mysql://localhost:3306/sayagain
+springdoc:
+  api-docs:
+    enabled: 'false'
+  swagger-ui:
+    url: /sayagain-api-specification.yml
+apiPrefix: /api
+server:
+  servlet:
+    context-path: /
+  port: '8002'
