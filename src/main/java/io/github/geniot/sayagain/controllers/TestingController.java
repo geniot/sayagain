@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@Profile("!dev")
+@Profile("!prod")
 @RequestMapping("${apiPrefix}/testing")
 public class TestingController extends BaseController {
 
