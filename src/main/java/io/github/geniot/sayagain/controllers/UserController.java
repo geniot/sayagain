@@ -48,7 +48,7 @@ public class UserController extends BaseController {
         Set<ConstraintViolation<User>> violations = validator.validate(user, clazz);
         for (ConstraintViolation<User> violation : violations) {
             stringBuilder.append(violation.getMessage());
-            stringBuilder.append(System.lineSeparator());
+            stringBuilder.append('\n');
         }
         return stringBuilder.toString();
     }
