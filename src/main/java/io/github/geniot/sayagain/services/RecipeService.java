@@ -3,7 +3,9 @@ package io.github.geniot.sayagain.services;
 import io.github.geniot.sayagain.entities.Ingredient;
 import io.github.geniot.sayagain.entities.Recipe;
 import io.github.geniot.sayagain.gen.model.IngredientDto;
+import io.github.geniot.sayagain.repositories.IngredientRepository;
 import io.github.geniot.sayagain.repositories.RecipeRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -14,9 +16,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 @Transactional
@@ -28,11 +28,20 @@ public class RecipeService {
     @Autowired
     private RecipeRepository recipeRepository;
 
+    @Autowired
+    private IngredientRepository ingredientRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     public Recipe createRecipe(Recipe recipe) {
         recipe.setUser(userService.getCurrentUser());
+        Set<Ingredient> newSet = new HashSet<>();
+        for (Ingredient ingredient : CollectionUtils.emptyIfNull(recipe.getIngredients())) {
+            Ingredient dbIngredient = ingredientRepository.findIngredientByName(ingredient.getName());
+            newSet.add(dbIngredient == null ? ingredient : dbIngredient);
+        }
+        recipe.setIngredients(newSet);
         return recipeRepository.save(recipe);
     }
 

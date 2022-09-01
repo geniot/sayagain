@@ -18,13 +18,13 @@ public class User {
     Integer id;
 
     @Column(name = "email")
-    @Email(message = "Email should be valid", groups = FirstConstraintGroup.class)
-    @NotEmpty(message = "Email cannot be empty", groups = FirstConstraintGroup.class)
+    @Email(message = "Email is invalid.", groups = FirstConstraintGroup.class)
+    @NotEmpty(message = "Email address cannot be empty.", groups = FirstConstraintGroup.class)
     String email;
 
     @Column(name = "password")
-    @Size(min = 2, max = 200, message = "Password should be between 2 and 200 characters", groups = SecondConstraintGroup.class)
-    @NotEmpty(message = "Password cannot be empty", groups = SecondConstraintGroup.class)
+    @Size(min = 2, max = 200, message = "Password should be between 2 and 200 characters.", groups = SecondConstraintGroup.class)
+    @NotEmpty(message = "Password cannot be empty.", groups = SecondConstraintGroup.class)
     String password;
 
     @ElementCollection(fetch = FetchType.EAGER)

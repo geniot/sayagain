@@ -1,7 +1,7 @@
 package io.github.geniot.sayagain.services;
 
 import io.github.geniot.sayagain.entities.Role;
-import io.github.geniot.sayagain.exception.CustomException;
+import io.github.geniot.sayagain.exception.ApiError;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -84,7 +84,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, "Expired or invalid JWT token");
         }
     }
 

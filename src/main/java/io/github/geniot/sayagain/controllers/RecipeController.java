@@ -1,5 +1,6 @@
 package io.github.geniot.sayagain.controllers;
 
+import io.github.geniot.sayagain.exception.ApiError;
 import io.github.geniot.sayagain.gen.model.IngredientDto;
 import io.github.geniot.sayagain.gen.model.RecipeDto;
 import io.github.geniot.sayagain.gen.model.SearchCriteriaDto;
@@ -28,12 +29,12 @@ public class RecipeController extends BaseController{
     @ResponseStatus(HttpStatus.CREATED)
     public RecipeDto postRecipe(@RequestBody RecipeDto recipeDto) {
         if (recipeDto.getId() != null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+            throw new ApiError(HttpStatus.BAD_REQUEST, "Recipe id is not empty.");
         }
         if (recipeDto.getIngredients() != null) {
             for (IngredientDto ingredientDto : recipeDto.getIngredients()) {
                 if (ingredientDto.getId() != null) {
-                    throw new HttpClientErrorException(HttpStatus.BAD_REQUEST);
+                    throw new ApiError(HttpStatus.BAD_REQUEST, "Ingredient id is not empty.");
                 }
             }
         }

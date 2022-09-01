@@ -1,11 +1,10 @@
 package io.github.geniot.sayagain.controllers;
 
-import io.github.geniot.sayagain.entities.SecondConstraintGroup;
 import io.github.geniot.sayagain.entities.FirstConstraintGroup;
+import io.github.geniot.sayagain.entities.SecondConstraintGroup;
 import io.github.geniot.sayagain.entities.User;
-import io.github.geniot.sayagain.exception.CustomException;
+import io.github.geniot.sayagain.exception.ApiError;
 import io.github.geniot.sayagain.gen.model.UserDto;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolation;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -34,22 +35,19 @@ public class UserController extends BaseController {
     private void validate(UserDto userDto) {
         User user = convertToUser(userDto);
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getViolations(user, FirstConstraintGroup.class));
-        stringBuilder.append(getViolations(user, SecondConstraintGroup.class));
+        List<String> validationErrors = new ArrayList<>();
+        getViolations(user, FirstConstraintGroup.class, validationErrors);
+        getViolations(user, SecondConstraintGroup.class, validationErrors);
 
-        if (!StringUtils.isEmpty(stringBuilder.toString())) {
-            throw new CustomException(stringBuilder.toString(), HttpStatus.UNPROCESSABLE_ENTITY);
+        if (!validationErrors.isEmpty()) {
+            throw new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, "Some fields are invalid.", validationErrors);
         }
     }
 
-    private String getViolations(User user, Class clazz) {
-        StringBuilder stringBuilder = new StringBuilder();
+    private void getViolations(User user, Class clazz, List<String> validationErrors) {
         Set<ConstraintViolation<User>> violations = validator.validate(user, clazz);
         for (ConstraintViolation<User> violation : violations) {
-            stringBuilder.append(violation.getMessage());
-            stringBuilder.append('\n');
+            validationErrors.add(violation.getMessage());
         }
-        return stringBuilder.toString();
     }
 }

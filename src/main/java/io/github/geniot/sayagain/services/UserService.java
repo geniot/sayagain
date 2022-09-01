@@ -1,7 +1,7 @@
 package io.github.geniot.sayagain.services;
 
 import io.github.geniot.sayagain.entities.User;
-import io.github.geniot.sayagain.exception.CustomException;
+import io.github.geniot.sayagain.exception.ApiError;
 import io.github.geniot.sayagain.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
             userRepository.save(user);
             return jwtTokenProvider.createToken(user.getEmail(), user.getRoles());
         } else {
-            throw new CustomException("Username is already in use", HttpStatus.UNPROCESSABLE_ENTITY);
+            throw new ApiError(HttpStatus.UNPROCESSABLE_ENTITY, "Username is already in use");
         }
     }
 
