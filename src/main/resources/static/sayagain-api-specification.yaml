@@ -5,9 +5,11 @@ info:
   version: 0.0.1
 servers:
   - url: https://sayagain.app/api
-    description: Main (production) server
+    description: Production server
+  - url: https://192.168.2.104/sayagain/api
+    description: Test server
   - url: https://localhost/api
-    description: Localhost (dev) server
+    description: Localhost server
 tags:
   - name: recipe
     description: Everything about your Recipes
