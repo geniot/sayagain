@@ -31,3 +31,6 @@ server:
   servlet:
     context-path: /
   port: '8002'
+  error:
+    include-message: always
+    include-binding-errors: always
