@@ -2,10 +2,12 @@ package io.github.geniot.sayagain.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,12 +18,16 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandlerController {
 
     Logger logger = LoggerFactory.getLogger(GlobalExceptionHandlerController.class);
+
+    @Autowired
+    Environment env;
 
     @Bean
     public ErrorAttributes errorAttributes() {
@@ -30,8 +36,10 @@ public class GlobalExceptionHandlerController {
             @Override
             public Map<String, Object> getErrorAttributes(WebRequest webRequest, ErrorAttributeOptions options) {
                 Map<String, Object> errorAttributes = super.getErrorAttributes(webRequest, options);
-                errorAttributes.remove("exception");
-                errorAttributes.remove("trace");
+                if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
+                    errorAttributes.remove("exception");
+                    errorAttributes.remove("trace");
+                }
                 return errorAttributes;
             }
         };
